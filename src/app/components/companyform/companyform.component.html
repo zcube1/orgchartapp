@@ -1,0 +1,30 @@
+<div class="formov">
+  <div class="frm">
+    <h1 class="title">Add a company</h1>
+    <form (ngSubmit)="onSubmit()" [formGroup]="companyForm">
+      <div class="form-group">
+        <input
+          type="text"
+          id="name"
+          name="name"
+          formControlName="name"
+          placeholder="type company name"
+          required
+        />
+        <div
+          *ngIf="
+            companyForm.get('name').invalid && companyForm.get('name').touched
+          "
+        >
+          <small class="error">Company name is required.</small>
+        </div>
+      </div>
+      <button type="submit" [disabled]="!companyForm.valid" class="btn">
+        Submit
+      </button>
+      <button type="button" class="btn btncancel" (click)="onClose()">
+        Cancel
+      </button>
+    </form>
+  </div>
+</div>

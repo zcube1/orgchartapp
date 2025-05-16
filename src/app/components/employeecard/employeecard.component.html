@@ -1,0 +1,25 @@
+<li>
+  <button (click)="deleteEmployeeHandler(employee.id)" id="btndelete">X</button>
+  <div class="employee">
+    {{ employee.first_name }} {{ employee.last_name }}
+    <BR />
+    <button (click)="openAddEmployeeForm()" id="btnAddEmployee">
+      Add Employee
+    </button>
+  </div>
+  <ul *ngIf="employee.employees && employee.employees.length > 0">
+    <app-employeecard
+      *ngFor="let emp of employee.employees"
+      [employee]="emp"
+      [company]="company"
+      (deleteEmployee)="onDeleteEmployee(employee.id)"
+    ></app-employeecard>
+  </ul>
+</li>
+
+<app-employeeform
+  *ngIf="showEmployeeForm"
+  [company]="company"
+  [employee]="employee"
+  (closed)="showEmployeeForm = false"
+></app-employeeform>

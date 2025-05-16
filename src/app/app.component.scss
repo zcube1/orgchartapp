@@ -1,0 +1,22 @@
+.treewrapper {
+  width: 100vw;
+  background-color: #f9f9f9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 20px;
+}
+.title {
+  font-size: 2.5rem;
+  text-align: center;
+  margin-top: 20px;
+  color: #333;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+.links {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
