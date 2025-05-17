@@ -1,6 +1,6 @@
 <div class="formov">
   <div class="frm">
-    <h1 class="title">Add a company</h1>
+    <h1 class="title">{{company ? "Edit Company" : "Add a company"}}</h1>
     <form (ngSubmit)="onSubmit()" [formGroup]="companyForm">
       <div class="form-group">
         <input

@@ -1,6 +1,6 @@
 <div class="formov">
   <div class="frm">
-    <h1 class="title">Add an employee</h1>
+    <h1 class="title">{{cmd == 'edit' ? "Edit Employee" : "Add an employee"}}</h1>
     <BR />
     <form (ngSubmit)="onSubmit()" [formGroup]="employeeForm">
       <div class="form-group">

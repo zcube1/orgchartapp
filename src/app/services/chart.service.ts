@@ -70,7 +70,6 @@ export class ChartService {
         ? { ...c, employees: [...c.employees, employeeWithId] }
         : c
     );
-
     this.companiesSubject.next(updated);
     localStorage.setItem('companies', JSON.stringify(updated));
   }
@@ -133,35 +132,30 @@ export class ChartService {
     localStorage.setItem('companies', JSON.stringify(updated));
   }
 
-  removeEmployeeFromEmployee(employeeIdToRemove: number) {
-    const currentCompanies = this.companiesSubject.getValue();
 
-    const updatedCompanies = currentCompanies.map((company) => ({
-      ...company,
-      employees: this.removeEmployeeFromTree(
-        company.employees || [],
-        employeeIdToRemove
-      ),
+
+
+ removeEmployeeRecursive(employees: any[], employeeIdToRemove: number): any[] {
+  return employees
+    .filter(employee => employee.id !== employeeIdToRemove)
+    .map(employee => ({
+      ...employee,
+      employees: this.removeEmployeeRecursive(employee.employees || [], employeeIdToRemove)
     }));
+}
 
-    this.companiesSubject.next(updatedCompanies);
-    localStorage.setItem('companies', JSON.stringify(updatedCompanies));
-  }
+async removeEmployeeById(employeeIdToRemove: number) {
+  const currentCompanies = this.companiesSubject.getValue();
 
-  private removeEmployeeFromTree(
-    employees: any[],
-    employeeIdToRemove: number
-  ): any[] {
-    return employees
-      .map((employee) => ({
-        ...employee,
-        employees: this.removeEmployeeFromTree(
-          employee.employees || [],
-          employeeIdToRemove
-        ),
-      }))
-      .filter((employee) => employee.id !== employeeIdToRemove);
-  }
+  const updatedCompanies = currentCompanies.map(company => ({
+    ...company,
+    employees: this.removeEmployeeRecursive(company.employees || [], employeeIdToRemove)
+  }));
+
+  this.companiesSubject.next(updatedCompanies);
+  localStorage.setItem('companies', JSON.stringify(updatedCompanies));
+}
+
 
   async updateEmployeeInCompany(companyId: number, employee: any) {
     const current = this.companiesSubject.getValue();
@@ -178,5 +172,54 @@ export class ChartService {
 
     this.companiesSubject.next(updated);
     localStorage.setItem('companies', JSON.stringify(updated));
+  }
+
+
+  updateEmployeeRecursive(
+    employees: any[],
+    employeeIdToUpdate: number,
+    updatedData: Partial<any>
+  ): any[] {
+    return employees.map(employee => {
+      if (employee.id === employeeIdToUpdate) {
+        // Merge existing employee data with updated data
+        return {
+          ...employee,
+          ...updatedData,
+          employees: this.updateEmployeeRecursive(employee.employees || [], employeeIdToUpdate, updatedData)
+        };
+      } else {
+        // Recurse into children anyway to catch nested matches
+        return {
+          ...employee,
+          employees: this.updateEmployeeRecursive(employee.employees || [], employeeIdToUpdate, updatedData)
+        };
+      }
+    });
+  }
+  async editEmployee(employeeIdToUpdate: number, updatedData: Partial<any>) {
+    const currentCompanies = this.companiesSubject.getValue();
+
+    const updatedCompanies = currentCompanies.map(company => ({
+      ...company,
+      employees: this.updateEmployeeRecursive(company.employees || [], employeeIdToUpdate, updatedData)
+    }));
+
+    this.companiesSubject.next(updatedCompanies);
+    localStorage.setItem('companies', JSON.stringify(updatedCompanies));
+  }
+
+
+  async resetCompany(){
+    const current = this.companiesSubject.getValue();
+    const updated = current.map((c) => {
+      c.employees = [];
+      return c;
+    });
+    this.companiesSubject.next(updated);
+    localStorage.setItem('companies', JSON.stringify(updated));
+    
+
+    
   }
 }

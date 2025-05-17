@@ -1,12 +1,11 @@
 <ul>
   <li>
-    <button (click)="deleteCompanyHandler(company.id)" id="btndelete">X</button>
+    <img src="images/remove.png" alt="Remove company" (click)="deleteCompanyHandler(company)" id="btndelete"/>
     <div class="company">
-      {{ company.name }}
-      <BR />
-      <button (click)="openAddEmployeeForm(company)" id="btnAddEmployee">
-        Add Employee
-      </button>
+     <h1> {{ company.name }}</h1>
+      
+     <img src="images/plus.png" alt="Add company" (click)="openAddEmployeeForm(company)" id="btnAddEmployee" style="margin-right:10px;"/>
+      <img src="images/pen.png" alt="Edit company" (click)="openEditCompanyForm(company)" id="btnAddEmployee"/>
     </div>
 
     <ul>
@@ -22,6 +21,12 @@
 
 <app-employeeform
   *ngIf="showEmployeeForm"
-  [company]="selectedCompany"
+  [company]="company" 
   (closed)="showEmployeeForm = false"
 ></app-employeeform>
+
+<app-companyform
+  *ngIf="showCompanyForm"
+  [company]="selectedCompany"
+  (closed)="showCompanyForm = false"
+></app-companyform>

@@ -1,25 +1,28 @@
 <li>
-  <button (click)="deleteEmployeeHandler(employee.id)" id="btndelete">X</button>
+  
+  <img src="images/remove.png" alt="Remove employee" (click)="deleteEmployeeHandler(employee.id)" id="btndelete" />
   <div class="employee">
-    {{ employee.first_name }} {{ employee.last_name }}
-    <BR />
-    <button (click)="openAddEmployeeForm()" id="btnAddEmployee">
-      Add Employee
-    </button>
+    <h4 style="margin-top:20px;">{{ employee.first_name }} {{ employee.last_name }}</h4>
+    <small>{{employee.role}}</small>
+    <BR>
+    <img src="images/plus.png" alt="Add employee" (click)="openAddEmployeeForm()" id="btnAddEmployee" style="margin-right:10px;"/>
+    <img src="images/pen.png" alt="Edit employee" (click)="openEditEmployeeForm()" id="btnAddEmployee"/>
   </div>
   <ul *ngIf="employee.employees && employee.employees.length > 0">
     <app-employeecard
       *ngFor="let emp of employee.employees"
       [employee]="emp"
       [company]="company"
-      (deleteEmployee)="onDeleteEmployee(employee.id)"
+      (deleteEmployee)="onDeleteEmployee(emp.id)"
     ></app-employeecard>
   </ul>
 </li>
 
+<!-- my form to add new employee-->
 <app-employeeform
   *ngIf="showEmployeeForm"
   [company]="company"
   [employee]="employee"
+  [cmd]="cmd" 
   (closed)="showEmployeeForm = false"
 ></app-employeeform>

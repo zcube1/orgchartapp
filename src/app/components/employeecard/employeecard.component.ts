@@ -15,6 +15,7 @@ export class EmployeecardComponent {
   @Input() company: any;
   @Output() deleteEmployee = new EventEmitter<number>();
   showEmployeeForm = false;
+  cmd = "";
 
   constructor(private chart: ChartService) {}
 
@@ -24,10 +25,16 @@ export class EmployeecardComponent {
 
   onDeleteEmployee(employeeId: number) {
     alert(employeeId);
-    this.chart.removeEmployeeFromEmployee(employeeId);
+    this.chart.removeEmployeeById(employeeId);
   }
 
   openAddEmployeeForm() {
     this.showEmployeeForm = true;
+    this.cmd = "add";	
+  }
+
+  openEditEmployeeForm() {
+    this.showEmployeeForm = true;
+    this.cmd = "edit";
   }
 }

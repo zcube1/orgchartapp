@@ -17,11 +17,31 @@ import { ChartService } from '../../services/chart.service';
 export class EmployeeformComponent {
   @Input() company: any;
   @Input() employee: any;
+  @Input() cmd: string = '';
   @Output() closed = new EventEmitter<void>();
 
   employeeForm: any;
   constructor(private fb: FormBuilder, private chartService: ChartService) {
     this.createForm();
+  }
+
+  ngOnInit(){
+    //patch value
+    if(this.employee && this.cmd == "edit"){
+      this.employeeForm.patchValue({
+        first_name: this.employee.first_name,
+        last_name: this.employee.last_name,
+        role: this.employee.role,
+        id: this.employee.id,
+        //address
+        address: {
+          street: this.employee.address.street,
+          street_2: this.employee.address.street_2,
+          city: this.employee.address.city,
+          country: this.employee.address.country,
+        },
+      });
+    }
   }
 
   createForm() {
@@ -44,19 +64,31 @@ export class EmployeeformComponent {
     this.closed.emit(); // Emit the "closed" event
   }
   onSubmit() {
-    if (this.employee) {
+  if (typeof this.employee == 'undefined') {
+    //add to company
+    this.chartService.addEmployeeToCompany(
+      this.company.id,
+      this.employeeForm.value
+    );
+  } else {
+    if(this.cmd == "edit"){
+      //edit employee
+      this.chartService.editEmployee(
+        this.employee.id,
+        this.employeeForm.value
+      );
+    }else{
+      //add to parent employee
       this.chartService.addEmployeetoEmployee(
         this.company.id,
         this.employee.id,
         this.employeeForm.value
       );
-    } else {
-      this.chartService.addEmployeeToCompany(
-        this.company.id,
-        this.employeeForm.value
-      );
     }
-
-    this.employeeForm.reset();
+    
   }
+
+  this.employeeForm.reset();
+}
+
 }

@@ -12,7 +12,7 @@ import { ChartService } from './services/chart.service';
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  title = 'Organization Chart App Demo';
+  title = 'Org Chart Demo';
   showCompanyForm = false;
 
   companies: any[] = [];
@@ -20,7 +20,7 @@ export class AppComponent {
   constructor(private chartService: ChartService) {
     this.chartService.companies$.subscribe((companies) => {
       this.companies = companies;
-      console.log('Companies:', this.companies);
+      console.log('Companies:', companies);
     });
   }
 
