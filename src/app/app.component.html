@@ -1,11 +1,22 @@
 <div class="wrapper">
-  <div class="container">
+  <div class="sideform">
+    <label class="switch">
+      <input type="checkbox" id="myToggle" [checked]="toProcessQueue" (change)="toggleQueue($event)" />
+      <span class="slider"></span>
+    </label>
+    <h4>Queue ({{requestQueues.length}}):</h4>
+    <ol>
+      <li *ngFor="let queue of requestQueues">
+        {{queue}}
+      </li>
+    </ol>
+  </div>
+  <div class="mainform">
     <h1 class="title">Welcome to {{ title }}</h1>
 
     <div class="links">
-      <a routerLink="/companyform" class="btn" (click)="openCompanyForm()" style="width:210px;height:40px;justify-content:center;align-items:center;display:flex;gap:10px">
-        <img src="/images/plus.png" style="width:20px;"/>Add a company</a
-      >
+      <a class="btn" (click)="openCompanyForm()" style="width:210px;height:40px;justify-content:center;align-items:center;display:flex;gap:10px">
+        <img src="/images/plus.png" style="width:20px;"/>Add a company</a>
     </div>
 
     <app-companyform

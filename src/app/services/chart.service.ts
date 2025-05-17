@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { HttpService } from './http.service';
 
 @Injectable({
   providedIn: 'root',
@@ -8,9 +9,15 @@ export class ChartService {
   private companiesSubject = new BehaviorSubject<any[]>([]);
   companies$ = this.companiesSubject.asObservable();
 
-  constructor() {
+  private requestQueueSubject = new BehaviorSubject<any[]>([]);
+  requestQueue$ = this.requestQueueSubject.asObservable();
+  private _toProcessQueue = new BehaviorSubject<boolean>(true);
+  toProcessQueue$ = this._toProcessQueue.asObservable();
+  
+  constructor(private http:HttpService) {
     this.init();
   }
+
   private init() {
     const companies = localStorage.getItem('companies');
     if (companies) {
@@ -18,7 +25,71 @@ export class ChartService {
     } else {
       this.companiesSubject.next([]);
     }
+
+    //queues
+    const savedQueue = localStorage.getItem('queues');
+    if (savedQueue) {
+      this.requestQueueSubject.next(JSON.parse(savedQueue));
+    }
+    this.processQueue();
   }
+
+  private addQueue(processType: string, jsondata: any) {
+    const current = this.requestQueueSubject.getValue();
+    const unique_id = this.generateUniqueId();
+    const newItem = {
+      process: processType,
+      data: jsondata,
+      created_at: Date.now(),
+      id: unique_id
+    };
+    
+    const updated = [...current, newItem];
+    this.requestQueueSubject.next(updated);
+    localStorage.setItem('queues', JSON.stringify(updated));
+  }
+
+  private removeQueue(id: number) {
+    const updated = this.requestQueueSubject.getValue().filter((e: any) => e.id !== id);
+    this.requestQueueSubject.next(updated);
+    localStorage.setItem('queues', JSON.stringify(updated));
+  }
+
+
+  setQueueProcessing(enabled: boolean) {
+    this._toProcessQueue.next(enabled);
+  }
+  
+  private processQueue() {
+    setInterval(async () => {
+      if (!this._toProcessQueue.getValue()) return;
+
+      const queue = this.requestQueueSubject.getValue();
+      if (queue.length === 0) return;
+
+      const item = queue[0];
+
+      console.log('Processing item:', item);
+
+      try {
+        await this.handleProcess(item);
+        this.removeQueue(item.id);
+      } catch (error) {
+        console.error('Error processing item:', error);
+      }
+    }, 5000);
+  }
+
+  private async handleProcess(item: any): Promise<void> {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        console.log('Processed:', item);
+        resolve();
+      }, 1000); // simulate 1s task
+    });
+  }
+
+
   async addCompany(company: any) {
     const current = this.companiesSubject.getValue();
     //generate a unique id for the company
@@ -40,6 +111,8 @@ export class ChartService {
     const updated = [...current, company];
     this.companiesSubject.next(updated);
     localStorage.setItem('companies', JSON.stringify(updated));
+    //add to queue
+    this.addQueue("add company",company);
   }
 
   async updateCompany(company: any) {
@@ -47,6 +120,7 @@ export class ChartService {
     const updated = current.map((c) => (c.id === company.id ? company : c));
     this.companiesSubject.next(updated);
     localStorage.setItem('companies', JSON.stringify(updated));
+    this.addQueue("update company",company);
   }
 
   async removeCompany(companyId: number) {
@@ -54,6 +128,9 @@ export class ChartService {
     const updated = current.filter((c) => c.id !== companyId);
     this.companiesSubject.next(updated);
     localStorage.setItem('companies', JSON.stringify(updated));
+
+    let jsondata ={"id":companyId};
+    this.addQueue("add company",jsondata);
   }
 
   generateUniqueId(): number {
@@ -72,6 +149,11 @@ export class ChartService {
     );
     this.companiesSubject.next(updated);
     localStorage.setItem('companies', JSON.stringify(updated));
+    let jsondata = {
+      "companyId":companyId,
+      "employeeData":employee
+    }
+    this.addQueue("add employee to company",jsondata);
   }
 
   async addEmployeetoEmployee(
@@ -114,6 +196,12 @@ export class ChartService {
 
     this.companiesSubject.next(updated);
     localStorage.setItem('companies', JSON.stringify(updated));
+
+    let jsondata= {
+      "parentEmployeeId":managerId,
+      "employeeData":newEmployee
+    }
+    this.addQueue("add employee to employee",jsondata);
   }
 
   async removeEmployeeFromCompany(companyId: number, employeeId: number) {
@@ -130,6 +218,10 @@ export class ChartService {
     );
     this.companiesSubject.next(updated);
     localStorage.setItem('companies', JSON.stringify(updated));
+    let jsondata= {
+      "id":employeeId
+    }
+    this.addQueue("remove employee",jsondata);
   }
 
 
@@ -154,6 +246,10 @@ async removeEmployeeById(employeeIdToRemove: number) {
 
   this.companiesSubject.next(updatedCompanies);
   localStorage.setItem('companies', JSON.stringify(updatedCompanies));
+  let jsondata ={
+    "id":employeeIdToRemove
+  }
+  this.addQueue("remove employee",jsondata);
 }
 
 
@@ -172,6 +268,8 @@ async removeEmployeeById(employeeIdToRemove: number) {
 
     this.companiesSubject.next(updated);
     localStorage.setItem('companies', JSON.stringify(updated));
+
+    this.addQueue("update employee",employee);
   }
 
 
@@ -197,6 +295,7 @@ async removeEmployeeById(employeeIdToRemove: number) {
       }
     });
   }
+
   async editEmployee(employeeIdToUpdate: number, updatedData: Partial<any>) {
     const currentCompanies = this.companiesSubject.getValue();
 
@@ -207,6 +306,7 @@ async removeEmployeeById(employeeIdToRemove: number) {
 
     this.companiesSubject.next(updatedCompanies);
     localStorage.setItem('companies', JSON.stringify(updatedCompanies));
+    this.addQueue("update employee",updatedData);
   }
 
 

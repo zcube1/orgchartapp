@@ -24,7 +24,6 @@ export class EmployeecardComponent {
   }
 
   onDeleteEmployee(employeeId: number) {
-    alert(employeeId);
     this.chart.removeEmployeeById(employeeId);
   }
 

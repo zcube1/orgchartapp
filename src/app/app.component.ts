@@ -16,12 +16,24 @@ export class AppComponent {
   showCompanyForm = false;
 
   companies: any[] = [];
+  requestQueues:any[] = [];
+  toProcessQueue = false;
 
   constructor(private chartService: ChartService) {
     this.chartService.companies$.subscribe((companies) => {
       this.companies = companies;
-      console.log('Companies:', companies);
     });
+
+    this.chartService.requestQueue$.subscribe((queues)=>{
+      this.requestQueues = queues;
+    });
+
+    this.chartService.setQueueProcessing(this.toProcessQueue);
+  }
+
+  toggleQueue(event: any) {
+    this.toProcessQueue = event.target.checked;
+    this.chartService.setQueueProcessing(this.toProcessQueue);
   }
 
   openCompanyForm() {
