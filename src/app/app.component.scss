@@ -9,7 +9,7 @@
   font-size: 2.5rem;
   text-align: center;
   margin-top: 20px;
-  color:  white;
+  color: white;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 .links {
@@ -24,67 +24,86 @@
   height: 100vh;
   display: flex;
   flex-direction: row;
-   overflow: hidden;
+  overflow: hidden;
 }
 
 .sideform {
-  background-color: #17153B;
+  background-color: #17153b;
   color: white;
   padding: 10px;
   height: 100vh;
-  width: 200px; 
-  flex-shrink: 0; 
+  width: 200px;
+  flex-shrink: 0;
 }
 
-
 .mainform {
-   flex: 1;
-  min-width: 0; 
+  flex: 1;
+  min-width: 0;
   overflow: auto;
 }
 
-
 .switch {
-    position: relative;
-    display: inline-block;
-    width: 45px;
-    height: 20px;
-  }
+  position: relative;
+  display: inline-block;
+  width: 45px;
+  height: 20px;
+}
 
-  .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
 
-  .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: 0.3s;
-    border-radius: 28px;
-  }
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.3s;
+  border-radius: 28px;
+}
 
-  .slider::before {
-    position: absolute;
-    content: "";
-    height: 15px;
-    width: 15px;
-    left: 3px;
-    bottom: 3px;
-    background-color: white;
-    transition: 0.3s;
-    border-radius: 50%;
-  }
+.slider::before {
+  position: absolute;
+  content: "";
+  height: 15px;
+  width: 15px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
 
-  input:checked + .slider {
-    background-color: #433D8B;
-  }
+input:checked + .slider {
+  background-color: #433d8b;
+}
 
-  input:checked + .slider::before {
-    transform: translateX(22px);
-  }
+input:checked + .slider::before {
+  transform: translateX(22px);
+}
+
+.queuenode {
+  list-style-type: none;
+  margin-bottom: 10px;
+  background-color: #433d8b;
+  padding: 4px;
+  border-radius: 3px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.imgqueuelogo {
+  width: 18px;
+}
+.loadingqueue {
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
+  margin-left: 10px;
+}

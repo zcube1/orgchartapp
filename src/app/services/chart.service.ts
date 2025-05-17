@@ -134,7 +134,7 @@ export class ChartService {
     localStorage.setItem('companies', JSON.stringify(updated));
 
     let jsondata = { id: companyId };
-    this.addQueue('add company', jsondata);
+    this.addQueue('remove company', jsondata);
   }
 
   async addEmployeeToCompany(companyId: number, employee: any) {
